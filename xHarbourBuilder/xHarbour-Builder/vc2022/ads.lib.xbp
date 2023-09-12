@@ -1,0 +1,24 @@
+CINI = xbuild.vc2022.ini
+C_OUTPUTFOLDER =
+DEFFILE =
+INCLUDEFOLDERS = $(HB_DIR_ADS)
+LGUI = .F.
+LIBFOLDERS =
+LMT = .F.
+MAPFILE =
+MYC_FLAGS =
+MYDEFINES =
+MYLINK_FLAGS =
+MYPRG_FLAGS =
+MYRC_FLAGS =
+MYSLY_FLAGS =
+OUTPUTFOLDER = \xbp\vc2022\ads.lib
+PRG_OUTPUTFOLDER =
+RC_OUTPUTFOLDER =
+SLY_OUTPUTFOLDER =
+TARGETFOLDER = \xhb\lib\vc2022
+
+[contrib\rdd_ads\adsmgmnt.c]
+[contrib\rdd_ads\adsfunc.c]
+[contrib\rdd_ads\ads1.c]
+

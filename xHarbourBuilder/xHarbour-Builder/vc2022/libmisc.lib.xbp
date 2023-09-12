@@ -1,0 +1,31 @@
+CINI = xbuild.vc2022.ini
+C_OUTPUTFOLDER =
+DEFFILE =
+INCLUDEFOLDERS =
+LGUI = .F.
+LIBFOLDERS =
+LMT = .F.
+MAPFILE =
+MYC_FLAGS =
+MYDEFINES =
+MYLINK_FLAGS =
+MYPRG_FLAGS =
+MYRC_FLAGS =
+MYSLY_FLAGS =
+OUTPUTFOLDER = \xbp\vc2022\libmisc.lib
+PRG_OUTPUTFOLDER =
+RC_OUTPUTFOLDER =
+SLY_OUTPUTFOLDER =
+TARGETFOLDER = \xhb\lib\vc2022
+
+[source\misc\hb_f.c]
+
+# *** samples.lib ***
+[tests\misc\date.c]
+[tests\misc\dbf.c]
+[tests\misc\environ.c]
+[tests\misc\gauge.c]
+[tests\misc\num.c]
+[tests\misc\stack.c]
+[tests\misc\status.c]
+[tests\misc\time.c]

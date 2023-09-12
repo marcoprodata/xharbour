@@ -14,10 +14,13 @@ REM --> Set Environment
     IF EXIST xbuild.ini         DEL xBuild.ini > NUL:
     IF EXIST xbuild.windows.ini DEL xBuild.Windows.ini > NUL:
     SET OLD_PATH=%PATH%
-    IF "%XBUILD_XCC%"=="YES" CALL \xharbour\xHarbourBuilder\xHarbour-Builder\xbldfull-XCC.bat
+    IF "%XBUILD_XCC%"=="YES" CALL .\xbldfull-XCC.bat
 	SET PATH=%OLD_PATH%
 	SET OLD_PATH=%PATH%
-    IF "%XBUILD_VC8%"=="YES" CALL \xharbour\xHarbourBuilder\xHarbour-Builder\xbldfull-VC8.bat
+    IF "%XBUILD_VC8%"=="YES" CALL .\xbldfull-VC8.bat
+	SET PATH=%OLD_PATH%
+    SET OLD_PATH=%PATH%
+    IF "%XBUILD_VC2022%"=="YES" CALL .\xbldfull-VC2022.bat
 	SET PATH=%OLD_PATH%
 
 REM --> Cleanup for -ALL
@@ -55,9 +58,6 @@ REM --> Cleanup for -ALL
        RD  \xHB\dll\ApolloRDD /s /q
        RD  \xHB\dll\SQLRDD /s /q
        DEL \xHB\lib\*.lib /s
-       RD  \xHB\lib\Demo /s /q
-       RD  \xHB\lib\Personal /s /q
-       RD  \xHB\lib\Professional /s /q
        )
     
     IF "%XBUILD_VC8%"=="YES" (
@@ -67,6 +67,15 @@ REM --> Cleanup for -ALL
        RD \xHB\lib\vc8 /s /q
        MD \xHB\dll\vc8
        MD \xHB\lib\vc8
+      )
+
+    IF "%XBUILD_VC2022%"=="YES" (
+       RD \xHB\bin\vc2022 /s /q
+       MD \xHB\bin\vc2022
+       RD \xHB\dll\vc2022 /s /q
+       RD \xHB\lib\vc2022 /s /q
+       MD \xHB\dll\vc2022
+       MD \xHB\lib\vc2022
       )
 		
 	IF "%XCC_XBUILD%"=="NO" (
@@ -81,23 +90,23 @@ REM --> Cleanup for -ALL
 	   ATTRIB -R \xHB\Bin\xRC.exe
            ATTRIB -R \xHB\Bin\xRC.dll
          ) ELSE ( 
-      DEL \xharbour\bin\xCC.*
-      DEL \xharbour\bin\xRC.*
-      DEL \xharbour\bin\xLib.exe
-      DEL \xharbour\bin\xLink.exe
+      DEL ..\..\bin\xCC.*
+      DEL ..\..\bin\xRC.*
+      DEL ..\..\bin\xLib.exe
+      DEL ..\..\bin\xLink.exe
 	 )
 
-    DEL \xharbour\bin\xHB.exe
+    IF EXIST ..\..\bin\xHB.exe DEL ..\..\bin\xHB.exe
 
-    IF EXIST \xHB\include        RD \xHB\include /s /q
-    IF EXIST \xharbour\c_include RD \xharbour\c_include /s /q
-    IF EXIST \xharbour\c_lib     RD \xharbour\c_lib /s /q
+    IF EXIST \xHB\include    RD \xHB\include /s /q
+    IF EXIST ..\..\c_include RD ..\..\c_include /s /q
+    IF EXIST ..\..\c_lib     RD ..\..\c_lib /s /q
 
     REM We will use only \xharbour\lib\vc or bc5 so make sure that's the case
     REM when done using make_vc all or make_b32 all will quickly copy them back!
-    DEL \xharbour\lib\*.lib
-	COPY \xharbour\lib\vc\xharbour.lib \xharbour\lib\vc\harbour.lib
-    COPY \xharbour\lib\vc\*.lib \xharbour\lib\*.lib
+    DEL ..\..\lib\*.lib
+	 COPY ..\..\lib\vc\xharbour.lib ..\..\lib\vc\harbour.lib
+    COPY ..\..\lib\vc\*.lib ..\..\lib\*.lib
 	
 
     REM Clean up XBP
@@ -113,7 +122,13 @@ REM --> Copy files
       MD \xHB\bin\vc8
       MD \xHB\dll\vc8
       MD \xHB\lib\vc8
-      )
+   )
+
+   IF "%XBUILD_VC2022%"=="YES" (
+      IF NOT EXIST "\xHB\bin\vc2022" MD \xHB\bin\vc2022
+      IF NOT EXIST "\xHB\dll\vc2022" MD \xHB\dll\vc2022
+      IF NOT EXIST "\xHB\lib\vc2022" MD \xHB\lib\vc2022
+   )   
 
    IF NOT EXIST "\xHB\bin"         MD "\xHB\bin"
    IF NOT EXIST "\xHB\lib"         MD "\xHB\lib"
@@ -122,99 +137,108 @@ REM --> Copy files
 
     REM ** SQLRDD **
     IF NOT EXIST \xHB\dll\SQLRDD MD \xHB\dll\SQLRDD
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\dll\*.dll      \xHB\dll\SQLRDD /d /y
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\lib\*.lib      \xHB\lib /d /y
-IF "%XBUILD_VC8%"=="YES" (	
-	XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\lib\*.lib      \xHB\lib\vc8 /d /y 
-	)
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\include        \xHB\include /d /y /i
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\source\*.ch    \xHB\include /d /y
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\source\mysql.h \xHB\include /d /y
+    XCOPY ..\xHarbour-SQLRDD\dll\*.dll      \xHB\dll\SQLRDD /d /y
+    XCOPY ..\xHarbour-SQLRDD\lib\*.lib      \xHB\lib /d /y
+
+   IF "%XBUILD_VC8%"=="YES" (	
+	XCOPY ..\xHarbour-SQLRDD\lib\*.lib      \xHB\lib\vc8 /d /y 
+   )
+   IF "%XBUILD_VC2022%"=="YES" (	
+	XCOPY ..\xHarbour-SQLRDD\lib\*.lib      \xHB\lib\vc2022 /d /y 
+   )
+   
+    XCOPY ..\xHarbour-SQLRDD\include        \xHB\include /d /y /i
+    XCOPY ..\xHarbour-SQLRDD\source\*.ch    \xHB\include /d /y
+    XCOPY ..\xHarbour-SQLRDD\source\mysql.h \xHB\include /d /y
     IF EXIST \xHB\include\sqlrdd.xns DEL \xHB\include\sqlrdd.xns
-    COPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\dll\fbclient.dll \xHB\bin /Y
-    COPY \xharbour\xHarbourBuilder\xHarbour-SQLRDD\dll\libmysql.dll \xHB\bin /Y
+    COPY ..\xHarbour-SQLRDD\dll\fbclient.dll \xHB\bin /Y
+    COPY ..\xHarbour-SQLRDD\dll\libmysql.dll \xHB\bin /Y
 
 
     REM ** ADS **
     REM HB_DIR_ADS is the ONE place ace32.dll SHOULD be in.
     IF NOT EXIST \xHB\dll\ADS MD \xHB\dll\ADS
-    XCOPY "%HB_DIR_ADS%\Ace32.dll"           \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\Ace32.dll"           \xHB\Bin\    /d /y
-    XCOPY "%HB_DIR_ADS%\AdsLoc32.dll"        \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\AXCws32.dll"         \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\Ansi.chr"            \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\Extend.chr"          \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\AdsLocal.cfg"        \xHB\dll\ADS /d /y
-    XCOPY "%HB_DIR_ADS%\ACE.h"               \xHB\include\w32 /d /y
-    XCOPY \xHarbour\contrib\rdd_ads\rddads.h \xHB\include\w32 /d /y
-    XCOPY \xHarbour\contrib\rdd_ads\ads*.ch  \xHB\include /d /y
+    XCOPY ".\xHarbour-ADS\Ace32.dll"           \xHB\dll\ADS /d /y
+    XCOPY ".\xHarbour-ADS\Ace32.dll"           \xHB\Bin\    /d /y
+    XCOPY ".\xHarbour-ADS\AdsLoc32.dll"        \xHB\dll\ADS /d /y
+    XCOPY ".\xHarbour-ADS\AXCws32.dll"         \xHB\dll\ADS /d /y
+    XCOPY ".\xHarbour-ADS\Ansi.chr"            \xHB\dll\ADS /d /y
+    XCOPY ".\xHarbour-ADS\Extend.chr"          \xHB\dll\ADS /d /y
+    XCOPY ".\xHarbour-ADS\AdsLocal.cfg"        \xHB\dll\ADS /d /y
+    XCOPY ".\Visual-xHarbour\Library\include\ACE.h"    \xHB\include\w32 /d /y
+    XCOPY ..\..\contrib\rdd_ads\rddads.h \xHB\include\w32 /d /y
+    XCOPY ..\..\contrib\rdd_ads\ads*.ch  \xHB\include /d /y
 
 
     REM ** FreeImage **
     IF "%XBUILD_VC8%"=="YES" (
        IF NOT EXIST \xHB\lib\vc8 MD \xHB\lib\vc8
-       XCOPY \xharbour\xHarbourBuilder\FreeImage\FreeImage.lib \xHB\lib\vc8  /d /y /i
-		 )
-    XCOPY \xharbour\xHarbourBuilder\FreeImage\FreeImage.lib    \xHB\lib\     /d /y /i
-    XCOPY \xharbour\xHarbourBuilder\FreeImage\FreeImage.dll    \xHB\dll\     /d /y /i
-    XCOPY \xharbour\xHarbourBuilder\FreeImage\FreeImage.dll    \xHB\bin\     /d /y /i
-    XCOPY \xHarbour\contrib\FreeImage\include\*.ch \xHB\include\ /d /y /i
-    XCOPY \xHarbour\contrib\FreeImage\include\*.h  \xHB\include\ /d /y /i
+       XCOPY ..\..\xHarbourBuilder\FreeImage\FreeImage.lib \xHB\lib\vc8  /d /y /i
+    )
+    IF "%XBUILD_VC2022%"=="YES" (
+       IF NOT EXIST \xHB\lib\vc2022 MD \xHB\lib\vc2022
+       XCOPY ..\..\xHarbourBuilder\FreeImage\FreeImage.lib \xHB\lib\vc2022  /d /y /i
+    )
+    XCOPY ..\FreeImage\FreeImage.lib    \xHB\lib\     /d /y /i
+    XCOPY ..\FreeImage\FreeImage.dll    \xHB\dll\     /d /y /i
+    XCOPY ..\FreeImage\FreeImage.dll    \xHB\bin\     /d /y /i
+    XCOPY ..\..\contrib\FreeImage\include\*.ch \xHB\include\ /d /y /i
+    XCOPY ..\..\contrib\FreeImage\include\*.h  \xHB\include\ /d /y /i
 
 
     REM ** ApolloRDD **
     IF "%_BUILD_APOLLORDD%"=="YES" (
        IF NOT EXIST \xHB\dll\ApolloRDD MD \xHB\dll\ApolloRDD
-       XCOPY \xharbour\xHarbourBuilder\xHarbour-ApolloRDD\dll\*.dll \xHB\dll\ApolloRDD /d /y /i
-       XCOPY \xharbour\xHarbourBuilder\xHarbour-ApolloRDD\*.h  \xHB\include /d /y /i
-       XCOPY \xharbour\xHarbourBuilder\xHarbour-ApolloRDD\*.ch \xHB\include /d /y /i
-       )
+       XCOPY ..\xHarbour-ApolloRDD\dll\*.dll \xHB\dll\ApolloRDD /d /y /i
+       XCOPY ..\xHarbour-ApolloRDD\*.h  \xHB\include /d /y /i
+       XCOPY ..\xHarbour-ApolloRDD\*.ch \xHB\include /d /y /i
+    )
 
     REM ** BGD.DLL **
     IF "%_BUILD_BGD%"=="YES" (
-       XCOPY \xharbour\xHarbourBuilder\xHarbour-Builder\BGD.DLL \xHB\dll  /d /y /i
-       )
+       XCOPY ..\xHarbour-Builder\BGD.DLL \xHB\dll  /d /y /i
+    )
 
-    XCOPY \xHarbour\include\*.api                       \xHB\include /d /y /i
-    XCOPY \xHarbour\include\*.ch                        \xHB\include /d /y /i
-    XCOPY \xHarbour\include\*.h                         \xHB\include /d /y /i
-    XCOPY \xHarbour\include\*.c                         \xHB\include /d /y /i
+    XCOPY ..\..\include\*.api                       \xHB\include /d /y /i
+    XCOPY ..\..\include\*.ch                        \xHB\include /d /y /i
+    XCOPY ..\..\include\*.h                         \xHB\include /d /y /i
+    XCOPY ..\..\include\*.c                         \xHB\include /d /y /i
 
-    XCOPY \xHarbour\source\rtl\pcre\*.h                 \xHB\include /d /y /i
-    XCOPY \xHarbour\source\rtl\pcre\*.generic           \xHB\include /d /y /i
-    XCOPY \xHarbour\include\hbverbld.h                  \xHB\include /d /y /i
-    XCOPY \xHarbour\contrib\gd\include                  \xHB\include /d /y /i
+    XCOPY ..\..\source\rtl\pcre\*.h                 \xHB\include /d /y /i
+    XCOPY ..\..\source\rtl\pcre\*.generic           \xHB\include /d /y /i
+    XCOPY ..\..\include\hbverbld.h                  \xHB\include /d /y /i
+    XCOPY ..\..\contrib\gd\include                  \xHB\include /d /y /i
 
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-Builder\include        \xHB\include /d /y /i
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-ActiveX\ole.ch         \xHB\include\w32 /d /y
-    XCOPY \xharbour\xHarbourBuilder\xHarbour-Builder\xcc*.lib       \xharbour\xHarbourBuilder\xHarbour-XCC\xcc\xcc*.lib /d /y /i
+    XCOPY ..\xHarbour-Builder\include        \xHB\include /d /y /i
+    XCOPY ..\xHarbour-ActiveX\ole.ch         \xHB\include\w32 /d /y
+    XCOPY ..\xHarbour-Builder\xcc*.lib       ..\xHarbour-XCC\xcc\xcc*.lib /d /y /i
  
     REM ** VXH **
-    XCOPY \xharbour\xHarbourBuilder\Visual-xHarbour\library\include \xHB\include\w32 /y /i
+    XCOPY ..\Visual-xHarbour\library\include \xHB\include\w32 /y /i
     IF EXIST \xHB\Include\w32\Oleserver.h      DEL \xHB\Include\w32\Oleserver.h
     IF EXIST \xHB\Include\w32\Structures_HB.ch DEL \xHB\Include\w32\Structures_HB.ch
     IF EXIST \xHB\Include\w32\Globals.ch       DEL \xHB\Include\w32\Globals.ch
-    XCOPY \xharbour\xHarbourBuilder\Visual-xHarbour\Extras \xHB\Bin /d /y /i
+    XCOPY ..\Visual-xHarbour\Extras \xHB\Bin /d /y /i
 
-    IF "%_BUILD_IEGUI_LIB%"=="YES" XCOPY \xharbour\xHarbourBuilder\IEGui\iegui.ch \xHB\include /d /y
+    IF "%_BUILD_IEGUI_LIB%"=="YES" XCOPY ..\IEGui\iegui.ch \xHB\include /d /y
 
-    IF EXIST \xHarbour\include\Ado.ch      DEL \xHarbour\include\Ado.ch
-    IF EXIST \xHarbour\include\Colors.ch   DEL \xHarbour\include\Colors.ch
-    IF EXIST \xHarbour\include\CommCtrl.ch DEL \xHarbour\include\CommCtrl.ch
-    IF EXIST \xHarbour\include\CommDlg.ch  DEL \xHarbour\include\CommDlg.ch
-    IF EXIST \xHarbour\include\Debug.ch.ch DEL \xHarbour\include\Debug.ch.ch
-    IF EXIST \xHarbour\include\Import.ch   DEL \xHarbour\include\Import.ch
-    IF EXIST \xHarbour\include\Ole.ch      DEL \xHarbour\include\Ole.ch
-    IF EXIST \xHarbour\include\RichEdit.ch DEL \xHarbour\include\RichEdit.ch
-    IF EXIST \xHarbour\include\SQLTypes.ch DEL \xHarbour\include\SQLTypes.ch
-    IF EXIST \xHarbour\include\VXH.ch      DEL \xHarbour\include\VXH.ch
-    IF EXIST \xHarbour\include\What32.ch   DEL \xHarbour\include\What32.ch
-    IF EXIST \xHarbour\include\WinApi.ch   DEL \xHarbour\include\WinApi.ch
-    IF EXIST \xHarbour\include\WinGDI.ch   DEL \xHarbour\include\WinGDI.ch
-    IF EXIST \xHarbour\include\WinInet.ch  DEL \xHarbour\include\WinInet.ch
-    IF EXIST \xHarbour\include\WinReg.ch   DEL \xHarbour\include\WinReg.ch
-    IF EXIST \xHarbour\include\WinStruc.ch DEL \xHarbour\include\WinStruc.ch
-    IF EXIST \xHarbour\include\WinUser.ch  DEL \xHarbour\include\WinUser.ch
+    IF EXIST ..\..\include\Ado.ch      DEL ..\..\include\Ado.ch
+    IF EXIST ..\..\include\Colors.ch   DEL ..\..\include\Colors.ch
+    IF EXIST ..\..\include\CommCtrl.ch DEL ..\..\include\CommCtrl.ch
+    IF EXIST ..\..\include\CommDlg.ch  DEL ..\..\include\CommDlg.ch
+    IF EXIST ..\..\include\Debug.ch.ch DEL ..\..\include\Debug.ch.ch
+    IF EXIST ..\..\include\Import.ch   DEL ..\..\include\Import.ch
+    IF EXIST ..\..\include\Ole.ch      DEL ..\..\include\Ole.ch
+    IF EXIST ..\..\include\RichEdit.ch DEL ..\..\include\RichEdit.ch
+    IF EXIST ..\..\include\SQLTypes.ch DEL ..\..\include\SQLTypes.ch
+    IF EXIST ..\..\include\VXH.ch      DEL ..\..\include\VXH.ch
+    IF EXIST ..\..\include\What32.ch   DEL ..\..\include\What32.ch
+    IF EXIST ..\..\include\WinApi.ch   DEL ..\..\include\WinApi.ch
+    IF EXIST ..\..\include\WinGDI.ch   DEL ..\..\include\WinGDI.ch
+    IF EXIST ..\..\include\WinInet.ch  DEL ..\..\include\WinInet.ch
+    IF EXIST ..\..\include\WinReg.ch   DEL ..\..\include\WinReg.ch
+    IF EXIST ..\..\include\WinStruc.ch DEL ..\..\include\WinStruc.ch
+    IF EXIST ..\..\include\WinUser.ch  DEL ..\..\include\WinUser.ch
 
     IF EXIST \xHB\include\Ado.ch           DEL \xHB\include\Ado.ch
     IF EXIST \xHB\include\Colors.ch        DEL \xHB\include\Colors.ch
@@ -242,8 +266,9 @@ REM  ===============================================
 REM  ===============================================
 
 
-IF "%XBUILD_XCC%"=="YES" CALL \xharbour\xHarbourBuilder\xHarbour-Builder\xbldfull2.bat %1
-IF "%XBUILD_VC8%"=="YES" CALL \xharbour\xHarbourBuilder\xHarbour-Builder\xbldfull2.bat %1
+IF "%XBUILD_XCC%"=="YES"    CALL .\xbldfull2.bat %1
+IF "%XBUILD_VC8%"=="YES"    CALL .\xbldfull2.bat %1
+IF "%XBUILD_VC2022%"=="YES" CALL .\xbldfull2.bat %1
 
 REM  ===============================================
 REM  ===============================================
@@ -288,6 +313,24 @@ REM  ===============================================
     SET VC8_XDEBUGW_AS=
     SET VC8_XPROMPT_AS=
     SET VC8_DEBUG=
+
+    SET VC2022_MT=
+    SET VC2022_DEMO=
+    SET VC2022_PERSONAL=
+    SET VC2022_PROF=
+    SET VC2022_XHB_EXE=
+    SET VC2022_XHB_LIB=
+    SET VC2022_XHB_DLL=
+    SET VC2022_CORELIBS=
+    SET VC2022_CONTRIB=
+    SET VC2022_DMAIN_LIB=
+    SET VC2022_VXHDLL=
+    SET VC2022_XBUILDW_AS=
+    SET VC2022_VXH_AS=
+    SET VC2022_XEDITW_AS=
+    SET VC2022_XDEBUGW_AS=
+    SET VC2022_XPROMPT_AS=
+    SET VC2022_DEBUG=
 
     SET XCC_MT=
     SET XCC_DEMO=
@@ -346,7 +389,7 @@ REM  ===============================================
 
     SET _XB_Exe=
 
-    CD \xharbour\xHarbourBuilder\xHarbour-Builder
+    CD ..
 
 :Done1
 
