@@ -1,5 +1,7 @@
 name: Build with msvc 2022
 
+on:
+
 jobs:
  build:
 
