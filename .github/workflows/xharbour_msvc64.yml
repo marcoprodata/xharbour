@@ -17,7 +17,7 @@ jobs:
       - name: Compile xHarbour
         shell: cmd
         run: |
-          cd xharbour_src\xharbour
+          cd \xharbour_src\xharbour
           make_vc all
       
   
