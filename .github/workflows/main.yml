@@ -1,0 +1,21 @@
+name: Build with msvc 2022
+
+jobs:
+ build:
+
+runs-on: windows-latest
+
+steps:
+  - name: Checkout xHarbour
+    uses: actions/checkout@v2
+    with:
+     repository: marcoprodata/xharbour
+     path: xharbour_src
+  
+  - name: Compile xHarbour
+    shell: cmd
+    run: |
+      cd xharbour_src\xharbour
+      make_vc all
+      
+  
