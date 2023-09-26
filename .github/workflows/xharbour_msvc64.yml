@@ -4,21 +4,20 @@ on:
  push:
 
 jobs:
- build:
+  build:
+    runs-on: windows-latest
 
-runs-on: windows-latest
-
-steps:
-  - name: Checkout xHarbour
-    uses: actions/checkout@v2
-    with:
-     repository: marcoprodata/xharbour
-     path: xharbour_src
+    steps:
+      - name: Checkout xHarbour
+        uses: actions/checkout@v2
+        with:
+          repository: marcoprodata/xharbour
+          path: xharbour_src
   
-  - name: Compile xHarbour
-    shell: cmd
-    run: |
-      cd xharbour_src\xharbour
-      make_vc all
+      - name: Compile xHarbour
+        shell: cmd
+        run: |
+          cd xharbour_src\xharbour
+          make_vc all
       
   
