@@ -18,6 +18,7 @@ jobs:
         shell: cmd
         run: |
           cd xharbour_src
+          SET HB_ARCH=64
           make_vc all
 
       - name: Create output folders
