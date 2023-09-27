@@ -1,4 +1,4 @@
-name: Build with msvc 2022
+name: Build with msvc 2022 x64
 
 on:
   workflow_dispatch:
