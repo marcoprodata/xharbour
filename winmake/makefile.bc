@@ -87,10 +87,18 @@ COMPILERLIBS   =\
 !endif
 
 !if ("$(WARNINGFLAGS)"=="")
+!if ("$(HB_ARCH)"=="64")
 WARNINGFLAGS =-w
+!else
+WARNINGFLAGS =-w -w-8027 -w-8071 -w-8121
+!endif
 
 !if ("$(HB_DEBUG)"=="d")
+!if ("$(HB_ARCH)"=="64")
 WARNINGFLAGS =-w
+!else
+WARNINGFLAGS =-w -w-8027 -w-8080 -w-8121
+!endif
 !endif
 
 !endif
@@ -220,7 +228,7 @@ CCC_CMD        =$(CC_CMD)
 !if ("$(HB_ARCH)"=="64")
 CC_CMD_ZIP     =$(CC) -c $(CC_DEBUGFLAGS) -I"$(HBZIP_DIR)\include" -I"include" -R- $(OPTFLAGS) -X- -o$@ $**
 !else
-CC_CMD_ZIP     =$(CC) -c $(CC_DEBUGFLAGS) -I"$(HBZIP_DIR)\include" -I"include" -R- $(OPTFLAGS) -w- -X- -o$@ $**
+CC_CMD_ZIP     =$(CC) -c $(CC_DEBUGFLAGS) -I"$(HBZIP_DIR)\include" -I"include" -vi -R- -H- $(OPTFLAGS) -w- -X- -o$@ $**
 !endif
 
 LINK_CMD       =$(LINKEXE) $(CC_LINKER_DEBUG_FLAGS) -ap -Tpe -x -Gn -C -L$(LIB_DIR) $(LFLAGS) $(BCC_STARTUP_OBJ) $**,$@,,

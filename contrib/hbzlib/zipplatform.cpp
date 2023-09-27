@@ -43,6 +43,9 @@ const TCHAR CZipPathComponent::m_cSeparator = _T( '\\' );
 #define _UTIMBUF_DEFINED
 #endif
 
+#if ( defined( __BORLANDC__ ) && __BORLANDC__ >= 1888 )
+#define _UTIMBUF_DEFINED
+#endif
 
 #ifndef _UTIMBUF_DEFINED
 #define _utimbuf utimbuf
@@ -179,8 +182,6 @@ bool ZipPlatform::SetFileModTime( LPCTSTR lpFileName, time_t ttime )
    ub.actime   = time( NULL );
    ub.modtime  = ttime == -1 ? time( NULL ) : ttime;   // if wrong file time, set it to the current
 #if ( defined( _MSC_VER ) && _MSC_VER >= 1900 ) 	         
-   return utime( lpFileName, &ub ) == 0;
-#elif ( defined( __BORLANDC__ ) && __BORLANDC__ >= 1888 )
    return utime( lpFileName, &ub ) == 0;
 #else
    return _tutime( lpFileName, &ub ) == 0;

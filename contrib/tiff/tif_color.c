@@ -36,6 +36,7 @@
  * Color space conversion routines.
  */
 
+#include <math.h>
 #include "tiffiop.h"
 
 /*
