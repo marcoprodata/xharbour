@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout xHarbour
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: marcoprodata/xharbour
           path: xharbour_src
@@ -19,5 +19,26 @@ jobs:
         run: |
           cd xharbour_src
           make_vc all
+
+      - name: Create output folders
+        shell: cmd
+        run: |
+          mkdir output
+          mkdir output\bin
+          mkdir output\lib
+          mkdir output\include
+          mkdir output\tests
+          xcopy xharbour_src\bin\* output\bin /s /e
+          xcopy xharbour_src\lib\* output\lib /s /e
+          xcopy xharbour_src\include\* output\include /s /e
+          xcopy xharbour_src\tests\* output\tests /s /e
+
+      - name: Upload xHarbour to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: xharbour_win64_msvc2022
+          path: output
+
+        
       
   
