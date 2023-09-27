@@ -1,0 +1,52 @@
+name: Build with BCC 7.60 x86
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout xHarbour
+        uses: actions/checkout@v3
+        with:
+          repository: marcoprodata/xharbour
+          path: xharbour_src
+
+      - name: Install dependencies
+        run: |
+          (new-object System.Net.WebClient).DownloadFile('http://www.xharbour.org/files/download/windows/bcc760.zip', 'C:\temp\bcc760.zip')
+           Expand-Archive -LiteralPath C:\temp\bcc760.zip -DestinationPath C:\bcc7 -Force
+           Expand-Arquive -LiteralPath 'xharbour_src\xHarbourBuilder\xHarbour-Builder\Setup New Machine\GnuWin32.zip' -DestinationPath c:\ -Force
+            
+      - name: Compile xHarbour
+        shell: cmd
+        run: |
+          set CC_DIR=c:\bcc7
+          set BISON_DIR=c:\gnuwin32\bin
+          cd xharbour_src
+          make_bc all
+
+      - name: Create output folders
+        shell: cmd
+        run: |
+          mkdir output
+          mkdir output\bin
+          mkdir output\lib
+          mkdir output\include
+          mkdir output\tests
+          xcopy xharbour_src\bin\* output\bin /s /e
+          xcopy xharbour_src\lib\* output\lib /s /e
+          xcopy xharbour_src\include\* output\include /s /e
+          xcopy xharbour_src\tests\* output\tests /s /e
+
+      - name: Upload xHarbour to artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: xharbour_win32_bcc
+          path: output
+
+        
+      
+  
