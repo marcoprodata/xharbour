@@ -18,7 +18,7 @@ jobs:
         run: |
           (new-object System.Net.WebClient).DownloadFile('http://www.xharbour.org/files/download/windows/bcc760.zip', 'C:\temp\bcc760.zip')
            Expand-Archive -LiteralPath C:\temp\bcc760.zip -DestinationPath C:\bcc7 -Force
-           Expand-Arquive -LiteralPath 'xharbour_src\xHarbourBuilder\xHarbour-Builder\Setup New Machine\GnuWin32.zip' -DestinationPath c:\ -Force
+           Expand-Archive -LiteralPath 'xharbour_src\xHarbourBuilder\xHarbour-Builder\Setup New Machine\GnuWin32.zip' -DestinationPath c:\ -Force
             
       - name: Compile xHarbour
         shell: cmd
